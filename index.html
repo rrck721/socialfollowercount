@@ -81,7 +81,7 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 .pw-cancel{font-size:12px;color:var(--txt3);margin-top:8px;cursor:pointer;text-decoration:underline;display:inline-block}
 .pw-err{font-size:12px;color:var(--red);margin-top:6px}
 
-.locked-bar{display:flex;align-items:center;gap:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:9px 14px;margin-bottom:12px;font-size:13px;color:var(--yellow)}
+.locked-bar{display:flex;align-items:center;gap:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:99px 14px;margin-bottom:12px;font-size:13px;color:var(--yellow)}
 
 .hint-strip{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:11px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px 10px;align-items:center}
 .hlbl{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;width:100%}
@@ -277,13 +277,11 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 'use strict';
 
 /* ══════════════════════════════════════════════════════
-   CONFIG — JSONBin credentials (localStorage se aayenge)
-   Ya directly yahan hardcode kar sakte ho:
-   var BIN_ID = 'YOUR_BIN_ID_HERE';
-   var MASTER_KEY = 'YOUR_MASTER_KEY_HERE';
+   આ બંને લાઈનમાં તમારા JSONBin ના સાચા ID અને Key મૂકી દો
 ══════════════════════════════════════════════════════ */
-var BIN_ID = '';
-var MASTER_KEY = '';
+var BIN_ID = 'તમારો_BIN_ID_અહીં_લખો';
+var MASTER_KEY = 'તમારી_MASTER_KEY_અહીં_લખો';
+
 var PASSWORD = '958612';
 var LS_CONFIG = 'smfc_config_v1';
 
@@ -376,33 +374,8 @@ async function loadData(){
 
 /* ── SETUP ── */
 function loadConfig(){
-  try{var c=JSON.parse(localStorage.getItem(LS_CONFIG)||'{}');BIN_ID=c.binId||BIN_ID;MASTER_KEY=c.masterKey||MASTER_KEY;}catch(e){}
+  try{var c=JSON.parse(localStorage.getItem(LS_CONFIG)||'{}');BIN_ID=BIN_ID||c.binId;MASTER_KEY=MASTER_KEY||c.masterKey;}catch(e){}
 }
-function saveConfig(binId,masterKey){
-  try{localStorage.setItem(LS_CONFIG,JSON.stringify({binId:binId,masterKey:masterKey}));}catch(e){}
-}
-
-$e('setupSaveBtn').addEventListener('click',async function(){
-  var key=$e('setupKey').value.trim();
-  var bin=$e('setupBin').value.trim();
-  if(!key||!bin){$e('setupErr').textContent='Dono fields required hain';return;}
-  $e('setupErr').textContent='';
-  $e('setupSaveBtn').textContent='Testing...';
-  $e('setupSaveBtn').disabled=true;
-  try{
-    var res=await fetch('https://api.jsonbin.io/v3/b/'+bin+'/latest',{headers:{'X-Master-Key':key}});
-    if(!res.ok)throw new Error('Invalid credentials (HTTP '+res.status+')');
-    BIN_ID=bin;MASTER_KEY=key;
-    saveConfig(bin,key);
-    $e('setupScreen').style.display='none';
-    $e('mainApp').style.display='block';
-    await initApp();
-  }catch(e){
-    $e('setupErr').textContent='Error: '+e.message+' — credentials check karo';
-    $e('setupSaveBtn').textContent='Save & Continue →';
-    $e('setupSaveBtn').disabled=false;
-  }
-});
 
 /* ── LOCK UI ── */
 function updateLockUI(){
@@ -597,22 +570,23 @@ $e('ovYes').addEventListener('click',async function(){
 $e('ov').addEventListener('click',function(e){if(e.target===this)$e('ov').classList.remove('show');});
 
 async function initApp(){
-  var had=await loadData();
-  render();
-  updStatus('ok',had?'Data load ho gaya ✓':'Koi data nahi mila — add karo');
-  if(had)showToast('✅','Data load ho gaya!');
-  $e('lockedBar').style.display='flex';
-  $e('saveBarEl').style.display='none';
+  loadConfig();
+  if(!6a7c3a19f5f4af5e290b23aa||!$2a$10$vh6dAcPg.i0er9ii5zhoC.wocMypFZn6xVNkf7hKJQnf3oGJIBxaC){
+    $e('setupScreen').style.display='flex';
+  } else {
+    $e('setupScreen').style.display='none';
+    $e('mainApp').style.display='block';
+    var had=await loadData();
+    render();
+    updStatus('ok',had?'Data load ho gaya ✓':'Koi data nahi mila — add karo');
+    if(had)showToast('✅','Data load ho gaya!');
+    $e('lockedBar').style.display='flex';
+    $e('saveBarEl').style.display='none';
+  }
 }
 
 /* ── INIT ── */
-loadConfig();
-if(!BIN_ID||!MASTER_KEY){
-  $e('setupScreen').style.display='flex';
-} else {
-  $e('mainApp').style.display='block';
-  initApp();
-}
+initApp();
 
 })();
 </script>
