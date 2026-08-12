@@ -81,7 +81,7 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 .pw-cancel{font-size:12px;color:var(--txt3);margin-top:8px;cursor:pointer;text-decoration:underline;display:inline-block}
 .pw-err{font-size:12px;color:var(--red);margin-top:6px}
 
-.locked-bar{display:flex;align-items:center;gap:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:99px 14px;margin-bottom:12px;font-size:13px;color:var(--yellow)}
+.locked-bar{display:flex;align-items:center;gap:8px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--yellow)}
 
 .hint-strip{background:var(--sur);border:1px solid var(--bdr);border-radius:12px;padding:11px 14px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:5px 10px;align-items:center}
 .hlbl{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.06em;width:100%}
@@ -184,17 +184,16 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 </head>
 <body>
 
-<!-- SETUP SCREEN (shown when BIN_ID not configured) -->
+<!-- SETUP SCREEN -->
 <div id="setupScreen" class="setup-screen" style="display:none">
   <div class="setup-card">
     <h2>⚙️ First Time Setup</h2>
-    <p class="sub">Data save karne ke liye JSONBin.io ki free service use hoti hai. Ek baar setup karo, phir sab browsers mein data share hoga.</p>
+    <p class="sub">Data save કરવા માટે JSONBin.io ની જરૂર છે. એકવાર ID/Key ઉમેરી દો પછી બધી Window માં Data દેખાશે.</p>
     <div class="setup-steps">
       <h3>Steps</h3>
-      <div class="setup-step"><div class="ss-num">1</div><div class="ss-txt"><a href="https://jsonbin.io" target="_blank">jsonbin.io</a> pe free account banao (GitHub se bhi ho sakta hai)</div></div>
-      <div class="setup-step"><div class="ss-num">2</div><div class="ss-txt">Login ke baad → apne naam pe click karo → <strong>API Keys</strong> → <code>Master Key</code> copy karo</div></div>
-      <div class="setup-step"><div class="ss-num">3</div><div class="ss-txt"><strong>Bins</strong> → <strong>Create Bin</strong> → content mein <code>{}</code> likho → Create → Bin ID copy karo</div></div>
-      <div class="setup-step"><div class="ss-num">4</div><div class="ss-txt">Neeche dono paste karo → Save karo → GitHub pe push karo</div></div>
+      <div class="setup-step"><div class="ss-num">1</div><div class="ss-txt"><a href="https://jsonbin.io" target="_blank">jsonbin.io</a> પર Free Account બનાવો.</div></div>
+      <div class="setup-step"><div class="ss-num">2</div><div class="ss-txt"><strong>API Keys</strong> માંથી <code>Master Key</code> કોપી કરો.</div></div>
+      <div class="setup-step"><div class="ss-num">3</div><div class="ss-txt"><strong>Bins</strong> → <strong>Create Bin</strong> માં <code>{}</code> લખી <code>Bin ID</code> કોપી કરો.</div></div>
     </div>
     <div class="setup-field">
       <label>JSONBin Master Key</label>
@@ -210,7 +209,7 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 </div>
 
 <!-- MAIN APP -->
-<div id="mainApp" class="app" style="display:none">
+<div id="mainApp" class="app">
   <header>
     <div class="badge"><span class="dot"></span>Social Media Tool</div>
     <h1>Your Total <em>Follower</em><br>Calculator</h1>
@@ -220,7 +219,7 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
   <div class="top-bar">
     <div class="save-bar" id="saveBarEl">
       <span class="sdot" id="sDot"></span>
-      <span class="stxt" id="sTxt">Loading...</span>
+      <span class="stxt" id="sTxt">Ready</span>
       <button class="btn-reset-sm" id="btnReset">↺ Reset</button>
       <button class="btn-save" id="btnSave">💾 Save</button>
     </div>
@@ -277,10 +276,11 @@ h1 em{font-style:normal;background:linear-gradient(135deg,#7c6ff7,#a78bfa,#ec489
 'use strict';
 
 /* ══════════════════════════════════════════════════════
-   આ બંને લાઈનમાં તમારા JSONBin ના સાચા ID અને Key મૂકી દો
+   જો તમારી પાસે BIN_ID અને MASTER_KEY હોય તો નીચે લખી શકો છો.
+   અથવા તો વેબસાઈટ ખોલીને Setup Screen માંથી પણ નાખી શકો છો.
 ══════════════════════════════════════════════════════ */
-var BIN_ID = 'તમારો_BIN_ID_અહીં_લખો';
-var MASTER_KEY = 'તમારી_MASTER_KEY_અહીં_લખો';
+var BIN_ID = '';
+var MASTER_KEY = '';
 
 var PASSWORD = '958612';
 var LS_CONFIG = 'smfc_config_v1';
@@ -301,7 +301,7 @@ PLATS.forEach(function(p){state[p.id]=[{name:p.label+' 1',value:'',url:'',en:fal
 var unlocked=false,unsaved=false,lastSaved=null,autoT=null,toastT=null,openMap={};
 
 function $e(id){return document.getElementById(id);}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function parseNum(r){
   if(!r||!String(r).trim())return null;
@@ -323,29 +323,23 @@ function updStatus(s,msg){
 function markUnsaved(){unsaved=true;updStatus('pend','Unsaved changes...');clearTimeout(autoT);autoT=setTimeout(function(){saveData(true);},3000);}
 
 /* ── JSONBin API ── */
-function jsonbinHeaders(write){
-  var h={'Content-Type':'application/json','X-Master-Key':MASTER_KEY};
-  if(!write)h['X-Access-Key']=MASTER_KEY;
-  return h;
-}
-
 async function saveData(silent){
-  if(!BIN_ID||!MASTER_KEY){showToast('⚠️','Config nahi mila');return;}
+  if(!BIN_ID||!MASTER_KEY){showToast('⚠️','Keys missing');return;}
   try{
     updStatus('pend','Saving...');
     var payload={state:state,savedAt:Date.now()};
     var res=await fetch('https://api.jsonbin.io/v3/b/'+BIN_ID,{
-      method:'PUT',headers:jsonbinHeaders(true),
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':MASTER_KEY},
       body:JSON.stringify(payload)
     });
     if(!res.ok)throw new Error('HTTP '+res.status);
     lastSaved=Date.now();unsaved=false;
-    var m=Math.round((Date.now()-lastSaved)/60000);
-    updStatus('ok',m<1?'Abhi save hua ✓':m+' min pehle ✓');
+    updStatus('ok','Abhi save hua ✓');
     var btn=$e('btnSave');
     if(btn){btn.classList.add('flash');btn.textContent='✓ Saved!';setTimeout(function(){btn.classList.remove('flash');btn.textContent='💾 Save';},2000);}
     if(!silent)showToast('💾','Data save ho gaya!');
-  }catch(e){updStatus('err','Save failed — retry karo');showToast('❌','Save nahi hua: '+e.message);}
+  }catch(e){updStatus('err','Save failed');showToast('❌','Save error: '+e.message);}
 }
 
 async function loadData(){
@@ -366,15 +360,32 @@ async function loadData(){
       }
     });
     lastSaved=d.savedAt||null;unsaved=false;
-    var m=lastSaved?Math.round((Date.now()-lastSaved)/60000):null;
-    updStatus('ok',m===null?'Loaded ✓':m<1?'Abhi save hua ✓':m+' min pehle save hua ✓');
+    updStatus('ok','Loaded ✓');
     return true;
   }catch(e){updStatus('err','Load failed');return false;}
 }
 
-/* ── SETUP ── */
+/* ── CONFIG / SETUP ── */
 function loadConfig(){
-  try{var c=JSON.parse(localStorage.getItem(LS_CONFIG)||'{}');BIN_ID=BIN_ID||c.binId;MASTER_KEY=MASTER_KEY||c.masterKey;}catch(e){}
+  try{
+    var c=JSON.parse(localStorage.getItem(LS_CONFIG)||'{}');
+    if(c.binId) BIN_ID=c.binId;
+    if(c.masterKey) MASTER_KEY=c.masterKey;
+  }catch(e){}
+}
+
+var setupSaveBtn=$e('setupSaveBtn');
+if(setupSaveBtn){
+  setupSaveBtn.addEventListener('click',function(){
+    var k=$e('setupKey').value.trim();
+    var b=$e('setupBin').value.trim();
+    if(!k||!b){$e('setupErr').textContent='Dono fields bharno zaroori hai!';return;}
+    BIN_ID=b;MASTER_KEY=k;
+    try{localStorage.setItem(LS_CONFIG,JSON.stringify({binId:b,masterKey:k}));}catch(e){}
+    $e('setupScreen').style.display='none';
+    $e('mainApp').style.display='block';
+    initApp();
+  });
 }
 
 /* ── LOCK UI ── */
@@ -571,21 +582,19 @@ $e('ov').addEventListener('click',function(e){if(e.target===this)$e('ov').classL
 
 async function initApp(){
   loadConfig();
-  if(!6a7c3a19f5f4af5e290b23aa||!$2a$10$vh6dAcPg.i0er9ii5zhoC.wocMypFZn6xVNkf7hKJQnf3oGJIBxaC){
+  if(!BIN_ID||!MASTER_KEY){
     $e('setupScreen').style.display='flex';
+    $e('mainApp').style.display='none';
   } else {
     $e('setupScreen').style.display='none';
     $e('mainApp').style.display='block';
-    var had=await loadData();
+    await loadData();
     render();
-    updStatus('ok',had?'Data load ho gaya ✓':'Koi data nahi mila — add karo');
-    if(had)showToast('✅','Data load ho gaya!');
-    $e('lockedBar').style.display='flex';
-    $e('saveBarEl').style.display='none';
   }
 }
 
 /* ── INIT ── */
+render();
 initApp();
 
 })();
